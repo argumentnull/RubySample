@@ -7,4 +7,7 @@ class HelloController < ApplicationController
   def view
     @msg = 'こんにちは、世界！'
   end
+  def app_var
+    # ender text: MY_APP['source']
+  end
 end
