@@ -83,4 +83,29 @@ class RecordController < ApplicationController
     flag = Book.where(publish: '新評論社').exists?
     render text: "存在するか？ : #{flag}"
   end
+  def pluck
+    render text: Book.where(publish: '技術評論社').pluck(:title, :price)
+  end
+  def scope
+    @books = Book.gihyo.top10
+    render 'hello/list'
+  end
+  def def_scope
+    render text: Review.all.inspect
+  end
+  def count
+    cnt = Book.where(publish: '技術評論社').count
+    render text: "#{cnt}件です。"
+  end
+  def average
+    price = Book.where(publish: '技術評論社').average(:price)
+    render text: "平均価格は#{price}円ですう。"
+  end
+  def groupby2
+    @books = Book.group(:publish).average(:price)
+  end
+  def literal_sql
+    @books = Book.find_by_sql(['SELECT publish, AVG(price) AS avg_price FROM "books" GROUP BY publish HAVING AVG(price) >= ?', 2500])
+    render 'record/groupby'
+  end
 end
