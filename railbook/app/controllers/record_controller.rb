@@ -108,4 +108,32 @@ class RecordController < ApplicationController
     @books = Book.find_by_sql(['SELECT publish, AVG(price) AS avg_price FROM "books" GROUP BY publish HAVING AVG(price) >= ?', 2500])
     render 'record/groupby'
   end
+  def update_all
+    cnt = Book.where(publish: '技術評論社').update_all(publish: 'Gihyo')
+    render text: "#{cnt}件のデータを更新しました。"
+  end
+  def update_all2
+    cnt = Book.order(:published).limit(5).update_all('price = price * 0.8')
+    render text: "#{cnt}件のデータを更新しました。"
+  end
+  def destroy
+    
+  end
+  def destroy_all
+    Book.destroy_all(['publish <> ?', '技術評論社'])
+    render text: '削除完了'
+  end
+  def transact
+    Book.transaction do
+      b1 = Book.new({isbn: '978-4-7741-4223-0',
+        title: 'Rubyポケットリファレンス',
+        price: 2000,
+        publish: '技術評論社',
+        published: '2011-01-01'})
+      b2.save!
+    end
+    render text: 'トランザクションは成功しました。'
+    rescue => e
+      render text: e.message
+  end
 end
